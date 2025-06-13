@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Status ESP2</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 60px; }
+    #eveniment { font-size: 2rem; margin-top: 30px; color: #e8512c; }
+  </style>
+</head>
+<body>
+  <h1>Status ESP2 (robot spate)</h1>
+  <div id="eveniment">Aștept cod de frânare...</div>
+  <script>
+    function updateStatus() {
+      fetch('http://localhost:5001/status_esp2')
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('eveniment').innerText = data.eveniment;
+        })
+        .catch(_ => {
+          document.getElementById('eveniment').innerText = "Conexiune pierdută cu ESP2!";
+        });
+    }
+    setInterval(updateStatus, 1000);
+    updateStatus();
+  </script>
+</body>
+</html>

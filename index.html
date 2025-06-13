@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Control Frânare ESP2</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 60px; }
+    button { font-size: 2rem; padding: 1em 2em; border-radius: 10px; background: #f33; color: white; border: none; cursor: pointer; }
+    #raspuns { margin-top: 30px; font-size: 1.2rem; }
+  </style>
+</head>
+<body>
+  <h1>Control Frânare ESP2</h1>
+  <button onclick="trimiteFranare()">Trimite frânare de urgență</button>
+  <div id="raspuns"></div>
+
+  <script>
+    function trimiteFranare() {
+      document.getElementById('raspuns').innerText = 'Se trimite comanda...';
+      fetch('http://localhost:5001/send_franare', { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === "ok") {
+            document.getElementById('raspuns').innerText = data.raspuns_esp;
+          } else {
+            document.getElementById('raspuns').innerText = "Eroare: " + data.mesaj;
+          }
+        })
+        .catch(err => {
+          document.getElementById('raspuns').innerText = "Eroare conexiune cu backend.";
+        });
+    }
+  </script>
+</body>
+</html>
