@@ -2,32 +2,33 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
-  <title>Control Frânare ESP2</title>
+  <title>Control roboți</title>
   <style>
     body { font-family: sans-serif; text-align: center; margin-top: 60px; }
-    button { font-size: 2rem; padding: 1em 2em; border-radius: 10px; background: #f33; color: white; border: none; cursor: pointer; }
-    #raspuns { margin-top: 30px; font-size: 1.2rem; }
+    button { font-size: 1.2rem; padding: 1em 2em; margin: 15px; }
+    #status { margin-top: 20px; font-size: 1rem; }
   </style>
 </head>
 <body>
-  <h1>Control Frânare ESP2</h1>
-  <button onclick="trimiteFranare()">Trimite frânare de urgență</button>
-  <div id="raspuns"></div>
+  <h1>Control roboți</h1>
+
+  <button onclick="post('/pornire_motor')">🔵 Pornire motor</button>
+  <button onclick="post('/franare')">🛑 Frânare de urgență</button>
+  <button onclick="post('/oprire_motor')">🔴 Oprire motor</button>
+
+  <div id="status"></div>
 
   <script>
-    function trimiteFranare() {
-      document.getElementById('raspuns').innerText = 'Se trimite comanda...';
-      fetch('http://localhost:5001/send_franare', { method: 'POST' })
+    function post(route) {
+      document.getElementById('status').innerText = '⏳ Se trimite comanda...';
+      fetch('http://localhost:5001' + route, { method: 'POST' })
         .then(r => r.json())
         .then(data => {
-          if (data.status === "ok") {
-            document.getElementById('raspuns').innerText = data.raspuns_esp;
-          } else {
-            document.getElementById('raspuns').innerText = "Eroare: " + data.mesaj;
-          }
+          document.getElementById('status').innerText =
+            data.raspuns || data.eroare || "Comandă trimisă.";
         })
-        .catch(err => {
-          document.getElementById('raspuns').innerText = "Eroare conexiune cu backend.";
+        .catch(() => {
+          document.getElementById('status').innerText = "❌ Eroare conexiune!";
         });
     }
   </script>
